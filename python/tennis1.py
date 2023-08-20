@@ -7,6 +7,12 @@ class TennisGame1:
         self.player2Name = player2Name
         self.p1points = 0
         self.p2points = 0
+        self.pointNames = {
+            0: "Love",
+            1: "Fifteen",
+            2: "Thirty",
+            3: "Forty",
+        }
 
     def won_point(self, playerName):
         if playerName == self.player1Name:
@@ -15,35 +21,30 @@ class TennisGame1:
             self.p2points += 1
 
     def score(self):
-        result = ""
-        tempScore=0
-        if (self.p1points==self.p2points):
-            result = {
-                0 : "Love-All",
-                1 : "Fifteen-All",
-                2 : "Thirty-All",
-            }.get(self.p1points, "Deuce")
-        elif (self.p1points>=4 or self.p2points>=4):
-            minusResult = self.p1points-self.p2points
-            if (minusResult==1):
-                result ="Advantage player1"
-            elif (minusResult ==-1):
-                result ="Advantage player2"
-            elif (minusResult>=2):
-                result = "Win for player1"
+        if self.p1points == self.p2points:
+            if self.p1points >= 3:
+                return "Deuce"
             else:
-                result ="Win for player2"
+                return self.pointNames[self.p1points] + "-All"
+
+        leader = None
+        leader_score = None
+        loser_score = None
+
+        if self.p1points > self.p2points:
+            leader = self.player1Name
+            leader_score = self.p1points
+            loser_score = self.p2points
         else:
-            for i in range(1,3):
-                if (i==1):
-                    tempScore = self.p1points
-                else:
-                    result+="-"
-                    tempScore = self.p2points
-                result += {
-                    0 : "Love",
-                    1 : "Fifteen",
-                    2 : "Thirty",
-                    3 : "Forty",
-                }[tempScore]
-        return result
+            leader = self.player2Name
+            leader_score = self.p2points
+            loser_score = self.p1points
+
+        if leader_score >= 4:
+            if leader_score - loser_score > 1:
+                return f"Win for {leader}"
+            else:
+                return f"Advantage {leader}"
+
+        return self.pointNames[self.p1points] +\
+            f"-{self.pointNames[self.p2points]}"
